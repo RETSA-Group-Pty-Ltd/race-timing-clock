@@ -7,7 +7,8 @@
 - GitHub Pages URL: `https://retsa-group-pty-ltd.github.io/race-timing-clock/`
 - Local path: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock`
 - Branch: `main`
-- Latest local commit at last handover update: `8002fa1` (`Update handover after Pages publish`)
+- Latest app update commit at this handover update: `b36640d` (`Update clock for MRA R5 SuperTT`)
+- Latest repo commit: run `git log -1 --oneline` locally; handover-only commits may follow the app update commit.
 - Source extracted from race-strategy-app local package after commit `8df993c` (`Prepare Winton race strategy updates`)
 - Deployment target: standalone local HTML first; GitHub Pages backup/share URL.
 - GitHub Pages status at publish: built and returning `index.html`.
@@ -63,6 +64,12 @@
   - selecting Sunday R6 Oztrack SuperTT
   - setting R6 from 12:38 to 12:50
   - confirming the selected row shows the revised time and downstream sessions cascade
+- Browser preview passed on `http://localhost:8767/`:
+  - title `MRA R5 Timing Clock - Oztrack SuperTT`
+  - 19 running-order rows
+  - one `Sun 5` day selector
+  - four Oztrack SuperTT target rows highlighted with `TT`
+  - no console errors
 - Theme matches Race Strategy Manager v1.7.19 electric blue telemetry styling.
 
 Historical Sydney 300 verification retained for context:
