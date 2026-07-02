@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050510">
+<title>Sydney 300 Timing Clock - 2026 Race Weekend</title>
+<style>
+  :root{
+    --primary:#00D9FF; --primary-dark:#00B8DD; --primary-glow:rgba(0,217,255,.3);
+    --accent:#0EA5E9; --accent-bright:#38BDF8;
+    --success:#10B981; --warning:#F59E0B; --danger:#EF4444; --purple:#A78BFA;
+    --bg-primary:#050510; --bg-secondary:#0A0A18; --bg-card:#12121F; --bg-card-hover:#1A1A2E;
+    --text-primary:#FFFFFF; --text-secondary:rgba(255,255,255,.7); --text-tertiary:rgba(255,255,255,.5);
+    --border:rgba(0,217,255,.15); --border-subtle:rgba(255,255,255,.08);
+    --gradient-primary:linear-gradient(135deg,#00D9FF 0%,#0EA5E9 100%);
+    --gradient-card:linear-gradient(160deg,rgba(0,217,255,.08) 0%,rgba(14,165,233,.05) 100%);
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:var(--sans); background:var(--bg-primary); color:var(--text-primary);
+    -webkit-font-smoothing:antialiased; overscroll-behavior:none; min-height:100%;
+  }
+  .num{font-variant-numeric:tabular-nums}
+  .flagstrip{height:5px;background:linear-gradient(90deg,#00D9FF,#53C33A,#F59E0B,#EF4444);box-shadow:0 0 24px rgba(0,217,255,.35)}
+  .header{position:sticky;top:0;z-index:100;background:linear-gradient(180deg,var(--bg-secondary),var(--bg-primary));
+    padding:16px 20px;border-bottom:1px solid var(--border);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .race-title{font-size:18px;font-weight:700;color:var(--primary);letter-spacing:-.5px;line-height:1.2;text-shadow:0 0 20px var(--primary-glow)}
+  .race-sub{font-size:11px;color:var(--text-tertiary);margin-top:3px;letter-spacing:.04em}
+  .hclock{text-align:right}
+  .hclock .clock-time{font-size:30px;font-weight:700;color:var(--primary);line-height:1;text-shadow:0 0 20px var(--primary-glow)}
+  .hclock .clock-rem{font-size:11px;color:var(--text-tertiary);margin-top:4px}
+  .conn-bar{display:flex;align-items:center;gap:12px;padding:10px 20px;font-size:12px;font-weight:600;
+    border-bottom:1px solid var(--border-subtle);background:var(--gradient-card);flex-wrap:wrap}
+  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .dot.live{background:var(--success);box-shadow:0 0 8px var(--success),0 0 16px rgba(16,185,129,.4);animation:pulse 1.5s infinite}
+  .dot.lap{background:var(--purple);box-shadow:0 0 8px var(--purple);animation:pulse 1.5s infinite}
+  .dot.wait{background:var(--warning);box-shadow:0 0 6px var(--warning)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .conn-status{color:var(--text-secondary)}
+  .conn-spacer{flex:1}
+  .seg{display:flex;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:10px;overflow:hidden}
+  .seg button{background:none;border:none;color:var(--text-secondary);font-family:var(--sans);font-size:12px;font-weight:600;
+    padding:8px 16px;cursor:pointer;letter-spacing:.03em;transition:all .2s}
+  .seg button.active{background:var(--gradient-primary);color:#000;box-shadow:0 0 12px var(--primary-glow)}
+  .ctl-btn{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:8px 12px;color:#fff;
+    font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;min-width:40px}
+  .ctl-btn:active{background:var(--primary);color:#000;transform:scale(.95)}
+  .ctl-btn:disabled{opacity:.35;cursor:not-allowed}
+  .ctl-btn.warn{border-color:rgba(245,158,11,.4);color:var(--warning)}
+  .ctl-btn.delay-readout{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.45);color:var(--warning);cursor:default}
+  .ctl-btn.delay-readout.zero{background:var(--bg-card);border-color:var(--border-subtle);color:var(--text-tertiary)}
+  .content{padding:16px 20px 24px}
+  .grid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;max-width:1500px;margin:0 auto}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--bg-card);border-radius:16px;padding:18px 20px;border:1px solid var(--border-subtle);position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;inset:0;background:var(--gradient-card);opacity:.5;pointer-events:none}
+  .card > *{position:relative;z-index:1}
+  .card-lbl{font-size:10px;text-transform:uppercase;color:var(--text-tertiary);font-weight:600;letter-spacing:.5px;margin-bottom:10px}
+  .next-name{font-size:clamp(22px,3.4vw,34px);font-weight:800;color:var(--accent-bright);line-height:1.1;letter-spacing:-.5px}
+  .next-meta{font-size:12px;color:var(--text-secondary);margin-top:4px}
+  .countdown{font-size:clamp(56px,11vw,116px);font-weight:800;line-height:1;color:var(--primary);
+    text-shadow:0 0 40px var(--primary-glow);letter-spacing:0;margin-top:10px}
+  .countdown.soon{color:var(--warning);text-shadow:0 0 40px rgba(245,158,11,.4)}
+  .pg-wrap{height:8px;background:var(--border-subtle);border-radius:4px;overflow:hidden;margin-top:14px}
+  .pg-bar{height:100%;background:var(--gradient-primary);transition:width .9s linear;box-shadow:0 0 8px var(--primary);width:0%}
+  .tod-block{margin-top:18px;padding-top:16px;border-top:1px solid var(--border-subtle)}
+  .tod-clock{font-size:clamp(38px,7vw,68px);font-weight:800;line-height:1;text-shadow:0 0 24px rgba(255,255,255,.08)}
+  .tod-date{font-size:12px;color:var(--text-tertiary);margin-top:4px}
+  .live{border-radius:14px;padding:16px 18px;margin-top:18px;border-left:4px solid var(--border-subtle);
+    background:rgba(255,255,255,.03);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .live.green{border-left-color:var(--success);background:rgba(16,185,129,.15);box-shadow:0 0 20px rgba(16,185,129,.18)}
+  .live.lap{border-left-color:var(--purple);background:rgba(167,139,250,.15);box-shadow:0 0 20px rgba(167,139,250,.18)}
+  .live .live-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .live .now{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:.85;display:flex;align-items:center;gap:8px}
+  .live.green .now{color:#4ade80}.live.lap .now{color:#c4b5fd}
+  .live .timeleft{font-size:clamp(28px,5vw,44px);font-weight:800;line-height:1}
+  .live.green .timeleft{color:#4ade80;text-shadow:0 0 20px rgba(16,185,129,.3)}
+  .live.lap .timeleft{color:#c4b5fd;text-shadow:0 0 20px rgba(167,139,250,.3)}
+  .live .sub{font-size:12px;color:var(--text-secondary);opacity:.8;margin-top:6px}
+  .ops{margin-top:18px;padding-top:16px;border-top:1px solid var(--border-subtle)}
+  .ops-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .ops-title{font-size:15px;font-weight:800;color:var(--primary);line-height:1.25}
+  .ops-sub{font-size:11px;color:var(--text-tertiary);margin-top:3px;line-height:1.35}
+  .ops-selected{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--border-subtle);margin-bottom:10px}
+  .ops-selected .sel-name{font-size:14px;font-weight:800;line-height:1.25}
+  .ops-selected .sel-meta{font-size:11px;color:var(--text-secondary);margin-top:4px;line-height:1.35}
+  .ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .ops-time{grid-column:1 / -1;display:grid;grid-template-columns:1fr auto;gap:8px}
+  .ops-input{width:100%;min-height:40px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;
+    color:var(--text-primary);font-family:var(--sans);font-size:16px;font-weight:700;padding:8px 10px}
+  .ops-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+  .ops-note{font-size:11px;color:var(--text-tertiary);margin-top:9px;line-height:1.45}
+  .order-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .order{display:flex;flex-direction:column;gap:9px;max-height:70vh;overflow-y:auto;padding-right:6px}
+  .order::-webkit-scrollbar{width:6px}.order::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px}
+  .sess{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:14px;min-height:58px;
+    padding:13px 16px;border-radius:12px;background:var(--bg-card);border:1px solid var(--border-subtle);position:relative;overflow:hidden;transition:all .2s;
+    color:inherit;font-family:var(--sans);text-align:left;cursor:pointer;width:100%}
+  .sess .code{font-size:11px;font-weight:700;color:var(--text-tertiary);text-align:center;letter-spacing:.02em}
+  .sess .nm-wrap{min-width:0}
+  .sess .nm{font-size:15px;font-weight:700;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sess .stype{font-size:12px;font-weight:500;color:var(--text-tertiary);margin-top:4px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sess .tm-wrap{text-align:right;white-space:nowrap}
+  .sess .tm{font-size:16px;font-weight:700;color:var(--text-primary);line-height:1}
+  .sess .dur{font-size:11px;font-weight:500;color:var(--text-tertiary);margin-top:4px}
+  .sess.is300{border:2px solid var(--primary);background:var(--bg-card-hover);box-shadow:0 0 14px var(--primary-glow),inset 0 0 18px rgba(0,217,255,.12)}
+  .sess.is300 .nm{color:var(--primary)}
+  .sess.is300 .stype{color:rgba(0,217,255,.65)}
+  .sess.is300 .code{color:var(--primary)}
+  .sess.brk{opacity:.5}.sess.brk .nm{color:var(--text-tertiary);font-weight:500}
+  .sess.past{opacity:.32}
+  .sess.current{border:2px solid var(--success);box-shadow:0 0 18px rgba(16,185,129,.3),inset 0 0 30px rgba(16,185,129,.12)}
+  .sess.current .code{color:var(--success)}
+  .sess.next-up{border-color:var(--warning);box-shadow:0 0 14px rgba(245,158,11,.3)}
+  .sess.selected{outline:2px solid var(--warning);outline-offset:2px}
+  .sess.revised .tm{color:var(--warning)}
+  .sess.done{opacity:.24}
+  .sess.done .tm::after{content:' done';font-size:10px;color:var(--success);font-weight:700;text-transform:uppercase}
+  .sess button{all:unset;display:contents;cursor:pointer}
+  .sdot{width:7px;height:7px;border-radius:99px;background:var(--text-tertiary);flex:none}
+  .sess.current .sdot{background:var(--success);box-shadow:0 0 8px var(--success);animation:pulse 1.5s infinite}
+  .sess.next-up .sdot{background:var(--warning);box-shadow:0 0 8px var(--warning)}
+  .badge300{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.08em;color:#000;background:var(--gradient-primary);
+    border-radius:5px;padding:2px 6px;margin-left:8px;vertical-align:middle;box-shadow:0 0 10px var(--primary-glow)}
+  .footer{font-size:11px;color:var(--text-tertiary);text-align:center;line-height:1.6;padding:18px 20px 8px;max-width:900px;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="flagstrip"></div>
+
+<header class="header">
+  <div>
+    <div class="race-title">Sydney 300 Timing Clock</div>
+    <div class="race-sub">SMP - MRA R4 - 12-13 JUNE 2026</div>
+  </div>
+  <div class="hclock">
+    <div class="clock-time num" id="tod">00:00:00</div>
+    <div class="clock-rem" id="date">-</div>
+  </div>
+</header>
+
+<div class="conn-bar">
+  <span class="dot wait" id="connDot"></span>
+  <span class="conn-status" id="connStatus">SCHEDULE MODE - times are estimated</span>
+  <span class="conn-spacer"></span>
+  <div class="seg" id="daySeg">
+    <button data-day="fri">Fri 12</button>
+    <button data-day="sat">Sat 13</button>
+  </div>
+  <button class="ctl-btn warn" id="delayMinus">- 5</button>
+  <button class="ctl-btn delay-readout zero" id="delayBtn">On time</button>
+  <button class="ctl-btn warn" id="delayPlus">+ 5</button>
+  <button class="ctl-btn" id="delayReset">Reset</button>
+</div>
+
+<div class="content">
+  <div class="grid">
+    <div class="card">
+      <div class="card-lbl">Countdown to next on-track session</div>
+      <div class="next-name" id="nextName">-</div>
+      <div class="next-meta" id="nextMeta">-</div>
+      <div class="countdown num" id="countdown">00:00:00</div>
+      <div class="pg-wrap"><div class="pg-bar" id="prog"></div></div>
+
+      <div class="tod-block">
+        <div class="card-lbl">Time of day</div>
+        <div class="tod-clock num" id="todBig">00:00:00</div>
+        <div class="tod-date" id="dateBig">-</div>
+      </div>
+
+      <div class="live" id="liveBox">
+        <div class="live-row">
+          <span class="now" id="liveNow"><span class="sdot"></span>NO SESSION LIVE</span>
+          <span class="timeleft num" id="liveTime">-</span>
+        </div>
+        <div class="sub" id="liveSub">Schedule-based - times are estimated</div>
+      </div>
+
+      <div class="ops">
+        <div class="ops-head">
+          <div>
+            <div class="ops-title">Race Control adjustments</div>
+            <div class="ops-sub">Select a row, then anchor or shift the rest of the day.</div>
+          </div>
+          <button class="ctl-btn" id="clearOps">Clear</button>
+        </div>
+        <div class="ops-selected">
+          <div class="sel-name" id="selName">No session selected</div>
+          <div class="sel-meta" id="selMeta">Tap a running-order row to adjust the schedule.</div>
+        </div>
+        <div class="ops-grid">
+          <button class="ctl-btn" id="startNow">Start now</button>
+          <button class="ctl-btn" id="markDone">Done</button>
+          <button class="ctl-btn warn" id="shiftFromMinus">-5 from here</button>
+          <button class="ctl-btn warn" id="shiftFromPlus">+5 from here</button>
+          <div class="ops-time">
+            <input class="ops-input num" id="setTimeInput" type="time" step="60">
+            <button class="ctl-btn" id="setTimeBtn">Set time</button>
+          </div>
+        </div>
+        <div class="ops-note" id="opsNote">Manual changes are local to this page and reset on reload.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="order-head">
+        <span class="card-lbl" style="margin-bottom:0">Today's running order</span>
+        <span class="num" id="delayPill" style="font-size:11px;color:var(--warning);font-weight:600"></span>
+      </div>
+      <div class="order" id="order"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    On-track start times are estimated. Listen for PA announcements and Race Control.<br>
+    Use the delay controls when the day starts running late. Standalone schedule clock; not connected to live timing.
+  </div>
+</div>
+
+<script>
+/* 2026 MRA R4 / Sydney 300 - Sydney Motorsport Park.
+   Schedule transcribed from official Friday and Saturday event schedules v2.26.06.05.
+   durationMin: time-boxed session length.
+   laps: lap-based race length, displayed with elapsed time because there is no live lap feed here.
+   type: "break" for admin, briefings, lunch, dinner, and gate notes.
+   is300: highlight Sydney 300 sessions. */
+const DAY_DATES = { fri:[2026,5,12], sat:[2026,5,13] };
+const DAY_ORDER = ["fri","sat"];
+const SCHEDULE = {
+  fri: {
+    label: "Friday 12 June",
+    items: [
+      {code:"",   t:"17:30", name:"Gates Open (Friday practice only)", type:"break"},
+      {code:"",   t:"17:30", name:"Doc Check / Sign-on", note:"Hinxman Room", type:"break"},
+      {code:"",   t:"18:10", name:"Drivers Briefing", note:"compulsory - Friday night", type:"break"},
+      {code:"P1", t:"18:30", name:"Pit Lane OPEN - Practice", note:"bay-to-exit measurement window", durationMin:240},
+      {code:"",   t:"19:00", name:"Gates open (Saturday competitors)", type:"break"},
+      {code:"",   t:"20:30", name:"Doc Check / Sign-on CLOSED", type:"break"},
+      {code:"",   t:"22:30", name:"Pit Lane CLOSED", type:"break"},
+      {code:"",   t:"23:30", name:"Gates Locked", type:"break"}
+    ]
+  },
+  sat: {
+    label: "Saturday 13 June",
+    items: [
+      {code:"B1", t:"07:45", name:"Drivers Briefing", note:"Super Mini & Alfa", type:"break"},
+      {code:"Q1", t:"08:30", name:"SuperMini Challenge", note:"Qualifying", durationMin:15},
+      {code:"Q2", t:"08:50", name:"Alfa Romeo Racing", note:"Qualifying", durationMin:15},
+      {code:"B2", t:"09:00", name:"Drivers Briefing", note:"Excels & Pulsars", type:"break"},
+      {code:"P1", t:"09:10", name:"Sydney 300 - Group 1", note:"Practice 1", durationMin:20, is300:true},
+      {code:"P2", t:"09:35", name:"Sydney 300 - Group 2", note:"Practice 1", durationMin:20, is300:true},
+      {code:"Q3", t:"10:00", name:"Excels", note:"Qualifying", durationMin:30},
+      {code:"B3", t:"10:15", name:"Drivers Briefing", note:"SYDNEY 300", type:"break", is300:true},
+      {code:"Q4", t:"10:35", name:"Pulsars", note:"Qualifying", durationMin:25},
+      {code:"R1", t:"11:05", name:"SuperMini Challenge", note:"Race 1", durationMin:15},
+      {code:"R2", t:"11:25", name:"Alfa Romeo Racing", note:"Race 1", durationMin:15},
+      {code:"P3", t:"11:45", name:"Sydney 300 - Group 1", note:"Practice 2", durationMin:20, is300:true},
+      {code:"P4", t:"12:10", name:"Sydney 300 - Group 2", note:"Practice 2", durationMin:20, is300:true},
+      {code:"",   t:"12:35", name:"Lunch", type:"break", durationMin:25},
+      {code:"R3", t:"13:00", name:"Excels", note:"Race 1", durationMin:60},
+      {code:"R4", t:"14:05", name:"Pulsars", note:"Race 1", durationMin:15},
+      {code:"Q5", t:"14:25", name:"Sydney 300", note:"Qual 1", durationMin:25, is300:true},
+      {code:"Q6", t:"14:53", name:"Sydney 300 (Top 60%)", note:"Qual 2", durationMin:15, is300:true},
+      {code:"Q7", t:"15:11", name:"Sydney 300 (Top 20%)", note:"Qual 3", durationMin:10, is300:true},
+      {code:"R5", t:"15:26", name:"SuperMini Challenge", note:"Race 2", durationMin:17},
+      {code:"R6", t:"15:48", name:"Alfa Romeo Racing", note:"Race 2", durationMin:17},
+      {code:"R7", t:"16:10", name:"Excels", note:"Race 2", durationMin:60},
+      {code:"R8", t:"17:15", name:"Pulsars", note:"Race 2", durationMin:60},
+      {code:"B4", t:"17:30", name:"Sydney 300 Refuellers Briefing", type:"break", is300:true},
+      {code:"R9", t:"18:20", name:"SuperMini Challenge", note:"Race 3", durationMin:20},
+      {code:"R10",t:"18:45", name:"Alfa Romeo Racing", note:"Race 3", durationMin:20},
+      {code:"",   t:"19:10", name:"Dinner", type:"break"},
+      {code:"R11",t:"19:30", name:"Viola Private Wealth Sydney 300", note:"THE RACE", laps:77, is300:true}
+    ]
+  }
+};
+
+let currentDay = "fri";
+let delayMinByDay = { fri:0, sat:0 };
+let delayAnchorByDay = { fri:null, sat:null };
+let selectedIdxByDay = { fri:null, sat:null };
+let startOverridesByDay = { fri:{}, sat:{} };
+let completedByDay = { fri:{}, sat:{} };
+let lastManualNote = "";
+const pad = n => String(n).padStart(2,"0");
+
+(function pickDay(){
+  const now = new Date();
+  for(const k of DAY_ORDER){
+    const [Y,Mo,D] = DAY_DATES[k];
+    if(now.getFullYear()===Y && now.getMonth()===Mo && now.getDate()===D){ currentDay=k; return; }
+  }
+  for(const k of DAY_ORDER){
+    const [Y,Mo,D] = DAY_DATES[k];
+    if(new Date(Y,Mo,D,23,59) >= now){ currentDay=k; return; }
+  }
+  currentDay = "sat";
+})();
+
+function baseSessionStart(day,item){
+  const [h,m] = item.t.split(":").map(Number);
+  const [Y,Mo,D] = DAY_DATES[day];
+  return new Date(Y, Mo, D, h, m, 0, 0);
+}
+
+function sessionStart(item, idx, day=currentDay){
+  if(startOverridesByDay[day] && startOverridesByDay[day][idx]){
+    return new Date(startOverridesByDay[day][idx]);
+  }
+  const base = baseSessionStart(day,item);
+  const delay = delayMinByDay[day] || 0;
+  const anchor = delayAnchorByDay[day];
+  if(delay > 0 && anchor && base >= anchor) return new Date(base.getTime()+delay*60000);
+  return base;
+}
+
+function fmtHMS(ms){
+  if(ms < 0) ms = 0;
+  const s = Math.floor(ms/1000);
+  return pad(Math.floor(s/3600))+":"+pad(Math.floor(s%3600/60))+":"+pad(s%60);
+}
+
+function minToHHMM(d){ return pad(d.getHours())+":"+pad(d.getMinutes()); }
+
+function parseHHMM(value){
+  if(!/^\d{2}:\d{2}$/.test(value)) return null;
+  const [h,m] = value.split(":").map(Number);
+  if(h > 23 || m > 59) return null;
+  const [Y,Mo,D] = DAY_DATES[currentDay];
+  return new Date(Y, Mo, D, h, m, 0, 0);
+}
+
+function activeSelectedIdx(){
+  const idx = selectedIdxByDay[currentDay];
+  return Number.isInteger(idx) && SCHEDULE[currentDay].items[idx] ? idx : null;
+}
+
+function applyCascadeFrom(idx, newStart){
+  const items = SCHEDULE[currentDay].items;
+  const currentStart = sessionStart(items[idx], idx);
+  const delta = newStart.getTime() - currentStart.getTime();
+  for(let i=idx;i<items.length;i++){
+    startOverridesByDay[currentDay][i] = sessionStart(items[i], i).getTime() + delta;
+  }
+  lastManualNote = "Shifted from " + (items[idx].code || "row " + (idx+1)) + " by " + Math.round(delta/60000) + " min";
+  render();
+}
+
+function setSelected(idx){
+  selectedIdxByDay[currentDay] = idx;
+  render();
+}
+
+function renderSelectedControls(){
+  const idx = activeSelectedIdx();
+  const name = document.getElementById("selName");
+  const meta = document.getElementById("selMeta");
+  const input = document.getElementById("setTimeInput");
+  const note = document.getElementById("opsNote");
+  const hasSelection = idx !== null;
+  ["startNow","markDone","shiftFromMinus","shiftFromPlus","setTimeBtn"].forEach(id=>{
+    document.getElementById(id).disabled = !hasSelection;
+  });
+  input.disabled = !hasSelection;
+  if(!hasSelection){
+    name.textContent = "No session selected";
+    meta.textContent = "Tap a running-order row to adjust the schedule.";
+    input.value = "";
+    note.textContent = lastManualNote || "Manual changes are local to this page and reset on reload.";
+    return;
+  }
+  const item = SCHEDULE[currentDay].items[idx];
+  const start = sessionStart(item, idx);
+  name.textContent = (item.code ? "[" + item.code + "] " : "") + item.name;
+  meta.textContent = (item.note || (item.type==="break" ? "Break/admin" : "On track")) +
+    " - showing " + minToHHMM(start) +
+    (startOverridesByDay[currentDay][idx] ? " - manually revised" : "");
+  input.value = minToHHMM(start);
+  note.textContent = completedByDay[currentDay][idx]
+    ? "Marked done. Clear adjustments to restore this row."
+    : (lastManualNote || "Start now and Set time both cascade this row and everything after it.");
+}
+
+function syncControls(){
+  document.querySelectorAll("#daySeg button").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.day === currentDay);
+  });
+  const delayMin = delayMinByDay[currentDay] || 0;
+  const dBtn = document.getElementById("delayBtn");
+  dBtn.textContent = delayMin ? ("Late +" + delayMin + "m") : "On time";
+  dBtn.classList.toggle("zero", delayMin === 0);
+  document.getElementById("delayPill").textContent = delayMin ? ("Shifted +" + delayMin + " min") : "";
+}
+
+function render(){
+  const now = new Date();
+  const items = SCHEDULE[currentDay].items;
+  syncControls();
+
+  const todStr = pad(now.getHours())+":"+pad(now.getMinutes())+":"+pad(now.getSeconds());
+  const dateStr = now.toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"}) +
+    " - showing " + SCHEDULE[currentDay].label;
+  document.getElementById("tod").textContent = todStr;
+  document.getElementById("todBig").textContent = todStr;
+  document.getElementById("date").textContent = "Showing " + SCHEDULE[currentDay].label;
+  document.getElementById("dateBig").textContent = dateStr;
+
+  let current = null, currentBreak = null, next = null;
+  for(let i=0;i<items.length;i++){
+    const it = items[i];
+    const start = sessionStart(it, i);
+    const durMs = (it.durationMin ? it.durationMin*60000 : null);
+    const end = durMs ? new Date(start.getTime()+durMs) : null;
+    it._idx = i; it._start = start; it._end = end; it._state = "upcoming"; it._nextup = false;
+    const isBreak = (it.type === "break");
+    if(completedByDay[currentDay][i]){
+      it._state = "past";
+      continue;
+    }
+
+    if(!isBreak){
+      if(now >= start && !current){
+        if(end){ if(now < end){ current = it; it._state = "current"; } }
+        else {
+          let ns = null;
+          for(let j=i+1;j<items.length;j++){ ns = sessionStart(items[j], j); break; }
+          if(!ns || now < ns){ current = it; it._state = "current"; }
+        }
+      }
+      if(end && now >= end) it._state = "past";
+    } else {
+      if(end && now >= start && now < end && !currentBreak){ currentBreak = it; }
+      if((end && now >= end) || (!end && now >= start)) it._state = "past";
+    }
+  }
+  for(const it of items){
+    if(it.type !== "break" && it._state === "upcoming" && !next){ next = it; it._nextup = true; }
+  }
+
+  const cd = document.getElementById("countdown");
+  if(next){
+    document.getElementById("nextMeta").textContent =
+      "[" + next.code + "] " + (next.note||"") + " - scheduled " + minToHHMM(next._start);
+    const ms = next._start - now;
+    cd.textContent = fmtHMS(ms);
+    cd.classList.toggle("soon", ms < 5*60000);
+    document.getElementById("nextName").innerHTML =
+      next.name + (next.is300 ? ' <span class="badge300">300</span>' : '');
+  } else {
+    document.getElementById("nextName").textContent = "No more sessions";
+    document.getElementById("nextMeta").textContent = SCHEDULE[currentDay].label + " complete";
+    cd.textContent = "-"; cd.classList.remove("soon");
+  }
+
+  const lb = document.getElementById("liveBox");
+  const ln = document.getElementById("liveNow");
+  const lt = document.getElementById("liveTime");
+  const ls = document.getElementById("liveSub");
+  lb.classList.remove("green","lap");
+  if(current){
+    if(current.laps){
+      lb.classList.add("lap");
+      ln.innerHTML = '<span class="sdot" style="background:var(--purple);box-shadow:0 0 8px var(--purple)"></span>RACE IN PROGRESS';
+      lt.textContent = fmtHMS(now - current._start) + " elapsed";
+      ls.textContent = "[" + current.code + "] " + current.name + " - " +
+        current.laps + " laps - no time-remaining without live lap data";
+    } else {
+      lb.classList.add("green");
+      ln.innerHTML = '<span class="sdot" style="background:var(--success);box-shadow:0 0 8px var(--success)"></span>SESSION LIVE';
+      lt.textContent = fmtHMS(current._end - now) + " left";
+      ls.textContent = "[" + current.code + "] " + current.name +
+        (current.note ? " - "+current.note : "") + " - ends " + minToHHMM(current._end);
+    }
+  } else if(currentBreak){
+    ln.innerHTML = '<span class="sdot"></span>' + (currentBreak.name||"BREAK").toUpperCase();
+    lt.textContent = fmtHMS(currentBreak._end - now) + " left";
+    ls.textContent = "On break" + (next ? " - next on track: " + next.name : "") + " - times are estimated";
+  } else {
+    ln.innerHTML = '<span class="sdot"></span>NO SESSION LIVE';
+    lt.textContent = "-";
+    ls.textContent = next ? "Awaiting " + next.name + " - times are estimated"
+                          : "Day complete";
+  }
+
+  const cDot = document.getElementById("connDot");
+  const cStat = document.getElementById("connStatus");
+  cDot.className = "dot " + (current ? (current.laps ? "lap" : "live") : "wait");
+  cStat.textContent = current
+    ? (current.laps ? ("RACE RUNNING - " + current.name) : ("SESSION LIVE - " + current.name))
+    : (currentBreak ? ("BREAK - " + currentBreak.name) : "SCHEDULE MODE - times are estimated");
+
+  const prog = document.getElementById("prog");
+  if(current && current._end){
+    const frac = (now - current._start)/(current._end - current._start);
+    prog.style.width = Math.min(100,Math.max(0,frac*100)) + "%";
+  } else if(current && current.laps){
+    prog.style.width = "100%";
+  } else { prog.style.width = "0%"; }
+
+  renderOrder(items);
+  renderSelectedControls();
+}
+
+function renderOrder(items){
+  const c = document.getElementById("order");
+  c.innerHTML = items.map(it=>{
+    const cls = ["sess"];
+    if(it.is300) cls.push("is300");
+    if(it.type==="break") cls.push("brk");
+    if(it._state==="past") cls.push("past");
+    if(it._state==="current") cls.push("current");
+    if(it._nextup) cls.push("next-up");
+    if(it._idx === activeSelectedIdx()) cls.push("selected");
+    if(startOverridesByDay[currentDay][it._idx]) cls.push("revised");
+    if(completedByDay[currentDay][it._idx]) cls.push("done");
+    const dur = it.laps ? (it.laps+" laps") : (it.durationMin ? it.durationMin+" min" : "");
+    const sched = minToHHMM(it._start);
+    const stype = it.note ? it.note : (it.type==="break" ? "Break" : "");
+    return `<button type="button" class="${cls.join(' ')}" data-idx="${it._idx}">
+      <span class="code">${it.code||""}</span>
+      <div class="nm-wrap">
+        <div class="nm">${it.name}${it.is300?' <span class="badge300">300</span>':''}</div>
+        ${stype?`<div class="stype">${stype}</div>`:''}
+      </div>
+      <div class="tm-wrap">
+        <div class="tm">${sched}</div>
+        ${dur?`<div class="dur">${dur}</div>`:''}
+      </div>
+    </button>`;
+  }).join("");
+}
+
+document.getElementById("daySeg").addEventListener("click",e=>{
+  const b = e.target.closest("button[data-day]"); if(!b) return;
+  currentDay = b.dataset.day;
+  render();
+});
+
+document.getElementById("order").addEventListener("click",e=>{
+  const row = e.target.closest("button[data-idx]"); if(!row) return;
+  setSelected(Number(row.dataset.idx));
+});
+
+function setDelay(v){
+  const nextDelay = Math.max(0,v);
+  const wasZero = (delayMinByDay[currentDay] || 0) === 0;
+  delayMinByDay[currentDay] = nextDelay;
+  if(nextDelay === 0) delayAnchorByDay[currentDay] = null;
+  else if(wasZero || !delayAnchorByDay[currentDay]) delayAnchorByDay[currentDay] = new Date();
+  render();
+}
+
+function selectedNowOnEventDate(){
+  const now = new Date();
+  const [Y,Mo,D] = DAY_DATES[currentDay];
+  return new Date(Y, Mo, D, now.getHours(), now.getMinutes(), 0, 0);
+}
+
+document.getElementById("delayPlus").onclick  = ()=>setDelay((delayMinByDay[currentDay] || 0)+5);
+document.getElementById("delayMinus").onclick = ()=>setDelay((delayMinByDay[currentDay] || 0)-5);
+document.getElementById("delayReset").onclick = ()=>setDelay(0);
+document.getElementById("startNow").onclick = ()=>{
+  const idx = activeSelectedIdx(); if(idx === null) return;
+  applyCascadeFrom(idx, selectedNowOnEventDate());
+};
+document.getElementById("setTimeBtn").onclick = ()=>{
+  const idx = activeSelectedIdx(); if(idx === null) return;
+  const d = parseHHMM(document.getElementById("setTimeInput").value);
+  if(!d){ lastManualNote = "Enter a valid time."; render(); return; }
+  applyCascadeFrom(idx, d);
+};
+document.getElementById("shiftFromPlus").onclick = ()=>{
+  const idx = activeSelectedIdx(); if(idx === null) return;
+  applyCascadeFrom(idx, new Date(sessionStart(SCHEDULE[currentDay].items[idx], idx).getTime()+5*60000));
+};
+document.getElementById("shiftFromMinus").onclick = ()=>{
+  const idx = activeSelectedIdx(); if(idx === null) return;
+  applyCascadeFrom(idx, new Date(sessionStart(SCHEDULE[currentDay].items[idx], idx).getTime()-5*60000));
+};
+document.getElementById("markDone").onclick = ()=>{
+  const idx = activeSelectedIdx(); if(idx === null) return;
+  completedByDay[currentDay][idx] = !completedByDay[currentDay][idx];
+  lastManualNote = (completedByDay[currentDay][idx] ? "Marked done: " : "Restored: ") + SCHEDULE[currentDay].items[idx].name;
+  render();
+};
+document.getElementById("clearOps").onclick = ()=>{
+  startOverridesByDay[currentDay] = {};
+  completedByDay[currentDay] = {};
+  delayMinByDay[currentDay] = 0;
+  delayAnchorByDay[currentDay] = null;
+  lastManualNote = "Cleared manual changes for " + SCHEDULE[currentDay].label + ".";
+  render();
+};
+
+render();
+setInterval(render, 1000);
+</script>
+</body>
+</html>
