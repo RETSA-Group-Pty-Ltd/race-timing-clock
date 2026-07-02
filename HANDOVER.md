@@ -1,4 +1,4 @@
-# Sydney 300 Timing Clock Handover
+# Race Timing Clock Handover
 
 ## Current State
 
@@ -7,14 +7,24 @@
 - GitHub Pages URL: `https://retsa-group-pty-ltd.github.io/race-timing-clock/`
 - Local path: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock`
 - Branch: `main`
-- Latest local commit at last handover update: `87e9e67` (`Deploy static clock with GitHub Pages Actions`)
+- Latest local commit at last handover update: `8002fa1` (`Update handover after Pages publish`)
 - Source extracted from race-strategy-app local package after commit `8df993c` (`Prepare Winton race strategy updates`)
 - Deployment target: standalone local HTML first; GitHub Pages backup/share URL.
 - GitHub Pages status at publish: built and returning `index.html`.
 - Current production/race-day file: `index.html`
-- Event: 2026 MRA R4 / Sydney 300, Sydney Motorsport Park, Friday 12 June and Saturday 13 June 2026.
+- Current event: 2026 MRA Series Round 5, Sydney Motorsport Park, Sunday 5 July 2026.
+- Target category: Oztrack SuperTT.
+- Current schedule source: `/Users/marcusrummler/Downloads/26MRA-R5-EventSchedule(v1.26.07.02).pdf`.
 
 ## What Changed In This Session
+
+- Updated the clock from the Sydney 300 schedule to the MRA Round 5 Sunday schedule.
+- Updated visible title/subtitle to `MRA R5 Timing Clock` / `OZTRACK SUPERTT - SMP - SUNDAY 5 JULY 2026`.
+- Replaced the schedule data with 19 rows from event schedule version `1.26.07.02`.
+- Highlighted Oztrack SuperTT rows with a `TT` badge.
+- Removed stale Sydney 300 labels from `index.html`.
+
+## Historical Sydney 300 Setup
 
 - Created final standalone race-day clock package.
 - Rebuilt the final HTML as `index.html` for easy Windows use and future GitHub Pages use.
@@ -40,8 +50,23 @@
 ## What Is Working And Verified
 
 - JS syntax check passed.
-- All `getElementById()` references resolve to IDs present in `index.html`.
-- After manual-control update, all 31 `getElementById()` references resolve.
+- All 31 `getElementById()` references resolve to IDs present in `index.html`.
+- Simulated MRA R5 / Oztrack SuperTT states passed for:
+  - 2026-07-03 pre-event countdown to Sunday.
+  - 2026-07-05 08:49 countdown to Oztrack SuperTT qualifying.
+  - 2026-07-05 08:51 live Oztrack SuperTT qualifying with 19 minutes left.
+  - 2026-07-05 10:31 live Oztrack SuperTT Race 1.
+  - 2026-07-05 12:39 live Oztrack SuperTT Race 2.
+  - 2026-07-05 14:17 live Oztrack SuperTT Race 3.
+  - 2026-07-05 16:05 day complete.
+- Manual-control simulation passed:
+  - selecting Sunday R6 Oztrack SuperTT
+  - setting R6 from 12:38 to 12:50
+  - confirming the selected row shows the revised time and downstream sessions cascade
+- Theme matches Race Strategy Manager v1.7.19 electric blue telemetry styling.
+
+Historical Sydney 300 verification retained for context:
+
 - Simulated schedule states passed for:
   - 2026-06-11 pre-event countdown to Friday practice.
   - 2026-06-12 18:29 before Friday practice.
@@ -54,24 +79,24 @@
   - setting R3 from 13:00 to 13:20
   - confirming Q5 cascades from 14:25 to 14:45
   - marking R3 done so the next-session countdown skips to R4
-- Theme matches Race Strategy Manager v1.7.19 electric blue telemetry styling.
 
 ## What Is Unfinished Or Risky
 
-- Schedule is manually transcribed from official v2.26.06.05 event schedules. If organisers issue a newer timetable, update the `SCHEDULE` object and re-test.
+- Schedule is manually transcribed from official R5 event schedule v1.26.07.02. If organisers issue a newer timetable, update the `SCHEDULE` object and re-test.
 - Delay and Race Control adjustment controls are manual estimates only. Official PA, Race Control, and published schedules override this clock.
-- The Sydney 300 race is lap-based, so the clock shows elapsed time only. It does not know live lap count or remaining time.
+- Current R5 sessions are time-boxed. The lap-based elapsed-only path remains in code for future events but is not used by the current schedule.
 - No persistence by design. Reloading resets selected day, delay, manual overrides, and done states.
 - Not connected to Natsoft or live timing.
 
 ## Critical Logic To Avoid Casual Refactor
 
-- `DAY_DATES` uses JavaScript zero-indexed months: June is `5`.
+- `DAY_DATES` uses JavaScript zero-indexed months: July is `6`.
 - Breaks are shown in the running order but skipped by the next on-track session countdown.
 - Lap-based race handling intentionally avoids fake countdowns.
 - Delay anchoring is per day using `delayMinByDay` and `delayAnchorByDay`.
 - Manual Race Control sync uses `startOverridesByDay` and `completedByDay`; changes are deliberately local to the current browser session.
-- RSM merge risk: this standalone file uses generic global names/classes such as `render`, `.card`, `.dot`, `.live`, and `.seg`; namespace these before folding into RSM.
+- Target-category highlighting uses `isTarget`, `.target`, and `.badgeTarget`.
+- RSM merge risk: this standalone file still uses generic global names/classes such as `render`, `.card`, `.dot`, `.live`, and `.seg`; namespace these before folding into another app.
 
 ## Commands And Test Steps
 
@@ -98,7 +123,7 @@ Windows race PC:
 ## Important Files
 
 - `index.html`: complete standalone timing clock with HTML, CSS, and JavaScript.
-- `HANDOVER-timing-clock.md`: this continuity document.
+- `HANDOVER.md`: this continuity document.
 - Original source repo reference: `RETSA-Group-Pty-Ltd/race-strategy-app`.
 
 ## Assumptions And External Services
@@ -109,7 +134,7 @@ Windows race PC:
 
 ## Recommended Next Steps
 
-- Copy `timing-clock/` to OneDrive `Race Day apps`.
+- Copy `race-timing-clock/` to OneDrive `Race Day apps`.
 - Open the copied file on the Windows mini PC before leaving for the event.
 - Keep one extra copy on a USB stick or phone storage.
-- If publishing to GitHub Pages, keep it as `/timing-clock/` and treat it as a backup, not the primary race-day runtime.
+- If publishing to GitHub Pages, use the existing `race-timing-clock` Pages site and treat it as a backup, not the primary race-day runtime.

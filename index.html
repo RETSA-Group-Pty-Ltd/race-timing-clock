@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#050510">
-<title>Sydney 300 Timing Clock - 2026 Race Weekend</title>
+<title>MRA R5 Timing Clock - Oztrack SuperTT</title>
 <style>
   :root{
     --primary:#00D9FF; --primary-dark:#00B8DD; --primary-glow:rgba(0,217,255,.3);
@@ -107,10 +107,10 @@
   .sess .tm-wrap{text-align:right;white-space:nowrap}
   .sess .tm{font-size:16px;font-weight:700;color:var(--text-primary);line-height:1}
   .sess .dur{font-size:11px;font-weight:500;color:var(--text-tertiary);margin-top:4px}
-  .sess.is300{border:2px solid var(--primary);background:var(--bg-card-hover);box-shadow:0 0 14px var(--primary-glow),inset 0 0 18px rgba(0,217,255,.12)}
-  .sess.is300 .nm{color:var(--primary)}
-  .sess.is300 .stype{color:rgba(0,217,255,.65)}
-  .sess.is300 .code{color:var(--primary)}
+  .sess.target{border:2px solid var(--primary);background:var(--bg-card-hover);box-shadow:0 0 14px var(--primary-glow),inset 0 0 18px rgba(0,217,255,.12)}
+  .sess.target .nm{color:var(--primary)}
+  .sess.target .stype{color:rgba(0,217,255,.65)}
+  .sess.target .code{color:var(--primary)}
   .sess.brk{opacity:.5}.sess.brk .nm{color:var(--text-tertiary);font-weight:500}
   .sess.past{opacity:.32}
   .sess.current{border:2px solid var(--success);box-shadow:0 0 18px rgba(16,185,129,.3),inset 0 0 30px rgba(16,185,129,.12)}
@@ -124,7 +124,7 @@
   .sdot{width:7px;height:7px;border-radius:99px;background:var(--text-tertiary);flex:none}
   .sess.current .sdot{background:var(--success);box-shadow:0 0 8px var(--success);animation:pulse 1.5s infinite}
   .sess.next-up .sdot{background:var(--warning);box-shadow:0 0 8px var(--warning)}
-  .badge300{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.08em;color:#000;background:var(--gradient-primary);
+  .badgeTarget{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.08em;color:#000;background:var(--gradient-primary);
     border-radius:5px;padding:2px 6px;margin-left:8px;vertical-align:middle;box-shadow:0 0 10px var(--primary-glow)}
   .footer{font-size:11px;color:var(--text-tertiary);text-align:center;line-height:1.6;padding:18px 20px 8px;max-width:900px;margin:0 auto}
 </style>
@@ -134,8 +134,8 @@
 
 <header class="header">
   <div>
-    <div class="race-title">Sydney 300 Timing Clock</div>
-    <div class="race-sub">SMP - MRA R4 - 12-13 JUNE 2026</div>
+    <div class="race-title">MRA R5 Timing Clock</div>
+    <div class="race-sub">OZTRACK SUPERTT - SMP - SUNDAY 5 JULY 2026</div>
   </div>
   <div class="hclock">
     <div class="clock-time num" id="tod">00:00:00</div>
@@ -148,8 +148,7 @@
   <span class="conn-status" id="connStatus">SCHEDULE MODE - times are estimated</span>
   <span class="conn-spacer"></span>
   <div class="seg" id="daySeg">
-    <button data-day="fri">Fri 12</button>
-    <button data-day="sat">Sat 13</button>
+    <button data-day="sun">Sun 5</button>
   </div>
   <button class="ctl-btn warn" id="delayMinus">- 5</button>
   <button class="ctl-btn delay-readout zero" id="delayBtn">On time</button>
@@ -222,69 +221,47 @@
 </div>
 
 <script>
-/* 2026 MRA R4 / Sydney 300 - Sydney Motorsport Park.
-   Schedule transcribed from official Friday and Saturday event schedules v2.26.06.05.
+/* 2026 MRA R5 - Sydney Motorsport Park.
+   Schedule transcribed from official event schedule v1.26.07.02.
    durationMin: time-boxed session length.
    laps: lap-based race length, displayed with elapsed time because there is no live lap feed here.
    type: "break" for admin, briefings, lunch, dinner, and gate notes.
-   is300: highlight Sydney 300 sessions. */
-const DAY_DATES = { fri:[2026,5,12], sat:[2026,5,13] };
-const DAY_ORDER = ["fri","sat"];
+   isTarget: highlight Oztrack SuperTT sessions. */
+const DAY_DATES = { sun:[2026,6,5] };
+const DAY_ORDER = ["sun"];
 const SCHEDULE = {
-  fri: {
-    label: "Friday 12 June",
+  sun: {
+    label: "Sunday 5 July",
     items: [
-      {code:"",   t:"17:30", name:"Gates Open (Friday practice only)", type:"break"},
-      {code:"",   t:"17:30", name:"Doc Check / Sign-on", note:"Hinxman Room", type:"break"},
-      {code:"",   t:"18:10", name:"Drivers Briefing", note:"compulsory - Friday night", type:"break"},
-      {code:"P1", t:"18:30", name:"Pit Lane OPEN - Practice", note:"bay-to-exit measurement window", durationMin:240},
-      {code:"",   t:"19:00", name:"Gates open (Saturday competitors)", type:"break"},
-      {code:"",   t:"20:30", name:"Doc Check / Sign-on CLOSED", type:"break"},
-      {code:"",   t:"22:30", name:"Pit Lane CLOSED", type:"break"},
-      {code:"",   t:"23:30", name:"Gates Locked", type:"break"}
-    ]
-  },
-  sat: {
-    label: "Saturday 13 June",
-    items: [
-      {code:"B1", t:"07:45", name:"Drivers Briefing", note:"Super Mini & Alfa", type:"break"},
-      {code:"Q1", t:"08:30", name:"SuperMini Challenge", note:"Qualifying", durationMin:15},
-      {code:"Q2", t:"08:50", name:"Alfa Romeo Racing", note:"Qualifying", durationMin:15},
-      {code:"B2", t:"09:00", name:"Drivers Briefing", note:"Excels & Pulsars", type:"break"},
-      {code:"P1", t:"09:10", name:"Sydney 300 - Group 1", note:"Practice 1", durationMin:20, is300:true},
-      {code:"P2", t:"09:35", name:"Sydney 300 - Group 2", note:"Practice 1", durationMin:20, is300:true},
-      {code:"Q3", t:"10:00", name:"Excels", note:"Qualifying", durationMin:30},
-      {code:"B3", t:"10:15", name:"Drivers Briefing", note:"SYDNEY 300", type:"break", is300:true},
-      {code:"Q4", t:"10:35", name:"Pulsars", note:"Qualifying", durationMin:25},
-      {code:"R1", t:"11:05", name:"SuperMini Challenge", note:"Race 1", durationMin:15},
-      {code:"R2", t:"11:25", name:"Alfa Romeo Racing", note:"Race 1", durationMin:15},
-      {code:"P3", t:"11:45", name:"Sydney 300 - Group 1", note:"Practice 2", durationMin:20, is300:true},
-      {code:"P4", t:"12:10", name:"Sydney 300 - Group 2", note:"Practice 2", durationMin:20, is300:true},
-      {code:"",   t:"12:35", name:"Lunch", type:"break", durationMin:25},
-      {code:"R3", t:"13:00", name:"Excels", note:"Race 1", durationMin:60},
-      {code:"R4", t:"14:05", name:"Pulsars", note:"Race 1", durationMin:15},
-      {code:"Q5", t:"14:25", name:"Sydney 300", note:"Qual 1", durationMin:25, is300:true},
-      {code:"Q6", t:"14:53", name:"Sydney 300 (Top 60%)", note:"Qual 2", durationMin:15, is300:true},
-      {code:"Q7", t:"15:11", name:"Sydney 300 (Top 20%)", note:"Qual 3", durationMin:10, is300:true},
-      {code:"R5", t:"15:26", name:"SuperMini Challenge", note:"Race 2", durationMin:17},
-      {code:"R6", t:"15:48", name:"Alfa Romeo Racing", note:"Race 2", durationMin:17},
-      {code:"R7", t:"16:10", name:"Excels", note:"Race 2", durationMin:60},
-      {code:"R8", t:"17:15", name:"Pulsars", note:"Race 2", durationMin:60},
-      {code:"B4", t:"17:30", name:"Sydney 300 Refuellers Briefing", type:"break", is300:true},
-      {code:"R9", t:"18:20", name:"SuperMini Challenge", note:"Race 3", durationMin:20},
-      {code:"R10",t:"18:45", name:"Alfa Romeo Racing", note:"Race 3", durationMin:20},
-      {code:"",   t:"19:10", name:"Dinner", type:"break"},
-      {code:"R11",t:"19:30", name:"Viola Private Wealth Sydney 300", note:"THE RACE", laps:77, is300:true}
+      {code:"B1", t:"07:45", name:"Drivers Briefing", type:"break"},
+      {code:"Q1", t:"08:30", name:"Alfa Romeo Racing", note:"Qualifying", durationMin:15},
+      {code:"Q2", t:"08:50", name:"Oztrack SuperTT", note:"Qualifying", durationMin:20, isTarget:true},
+      {code:"Q3", t:"09:15", name:"WinmaX Pulsars", note:"Qualifying", durationMin:20},
+      {code:"Q4", t:"09:40", name:"MX5 Mania MX5 Cup", note:"Qualifying", durationMin:20},
+      {code:"R1", t:"10:05", name:"Alfa Romeo Racing", note:"Race 1", durationMin:20},
+      {code:"R2", t:"10:30", name:"Oztrack SuperTT", note:"Race 1", durationMin:20, isTarget:true},
+      {code:"R3", t:"10:55", name:"WinmaX Pulsars", note:"Race 1", durationMin:20},
+      {code:"R4", t:"11:20", name:"MX5 Mania MX5 Cup", note:"Race 1", durationMin:20},
+      {code:"R5", t:"11:45", name:"Alfa Romeo Racing", note:"Race 2", durationMin:17},
+      {code:"",   t:"12:08", name:"Lunch", type:"break", durationMin:30},
+      {code:"R6", t:"12:38", name:"Oztrack SuperTT", note:"Race 2", durationMin:20, isTarget:true},
+      {code:"R7", t:"13:03", name:"WinmaX Pulsars", note:"Race 2", durationMin:20},
+      {code:"R8", t:"13:28", name:"MX5 Mania MX5 Cup", note:"Race 2", durationMin:20},
+      {code:"R9", t:"13:53", name:"Alfa Romeo Racing", note:"Race 3", durationMin:17},
+      {code:"R10",t:"14:16", name:"Oztrack SuperTT", note:"Race 3", durationMin:20, isTarget:true},
+      {code:"R11",t:"14:41", name:"WinmaX Pulsars", note:"Race 3", durationMin:30},
+      {code:"R12",t:"15:16", name:"MX5 Mania MX5 Cup", note:"Race 3", durationMin:20},
+      {code:"R13",t:"15:41", name:"Alfa Romeo Racing", note:"Race 4", durationMin:20}
     ]
   }
 };
 
-let currentDay = "fri";
-let delayMinByDay = { fri:0, sat:0 };
-let delayAnchorByDay = { fri:null, sat:null };
-let selectedIdxByDay = { fri:null, sat:null };
-let startOverridesByDay = { fri:{}, sat:{} };
-let completedByDay = { fri:{}, sat:{} };
+let currentDay = "sun";
+let delayMinByDay = { sun:0 };
+let delayAnchorByDay = { sun:null };
+let selectedIdxByDay = { sun:null };
+let startOverridesByDay = { sun:{} };
+let completedByDay = { sun:{} };
 let lastManualNote = "";
 const pad = n => String(n).padStart(2,"0");
 
@@ -298,7 +275,7 @@ const pad = n => String(n).padStart(2,"0");
     const [Y,Mo,D] = DAY_DATES[k];
     if(new Date(Y,Mo,D,23,59) >= now){ currentDay=k; return; }
   }
-  currentDay = "sat";
+  currentDay = "sun";
 })();
 
 function baseSessionStart(day,item){
@@ -449,7 +426,7 @@ function render(){
     cd.textContent = fmtHMS(ms);
     cd.classList.toggle("soon", ms < 5*60000);
     document.getElementById("nextName").innerHTML =
-      next.name + (next.is300 ? ' <span class="badge300">300</span>' : '');
+      next.name + (next.isTarget ? ' <span class="badgeTarget">TT</span>' : '');
   } else {
     document.getElementById("nextName").textContent = "No more sessions";
     document.getElementById("nextMeta").textContent = SCHEDULE[currentDay].label + " complete";
@@ -509,7 +486,7 @@ function renderOrder(items){
   const c = document.getElementById("order");
   c.innerHTML = items.map(it=>{
     const cls = ["sess"];
-    if(it.is300) cls.push("is300");
+    if(it.isTarget) cls.push("target");
     if(it.type==="break") cls.push("brk");
     if(it._state==="past") cls.push("past");
     if(it._state==="current") cls.push("current");
@@ -523,7 +500,7 @@ function renderOrder(items){
     return `<button type="button" class="${cls.join(' ')}" data-idx="${it._idx}">
       <span class="code">${it.code||""}</span>
       <div class="nm-wrap">
-        <div class="nm">${it.name}${it.is300?' <span class="badge300">300</span>':''}</div>
+        <div class="nm">${it.name}${it.isTarget?' <span class="badgeTarget">TT</span>':''}</div>
         ${stype?`<div class="stype">${stype}</div>`:''}
       </div>
       <div class="tm-wrap">

@@ -2,7 +2,7 @@
 
 Standalone race-day timing clock for motorsport event schedules.
 
-This app was created for the 2026 Sydney 300 as a second-screen schedule aid beside the Race Strategy App. It is intentionally simple: one self-contained `index.html` file with no build step, no login, no backend, and no internet dependency once copied locally.
+This app was created as a second-screen schedule aid beside the Race Strategy App. It is intentionally simple: one self-contained `index.html` file with no build step, no login, no backend, and no internet dependency once copied locally.
 
 GitHub Pages backup:
 
@@ -10,13 +10,21 @@ GitHub Pages backup:
 https://retsa-group-pty-ltd.github.io/race-timing-clock/
 ```
 
+## Current Event
+
+- 2026 MRA Series Round 5
+- Sydney Motorsport Park
+- Sunday 5 July 2026
+- Target category: Oztrack SuperTT
+- Schedule source: `26MRA-R5-EventSchedule(v1.26.07.02).pdf`
+
 ## What It Does
 
 - Shows the current time of day.
 - Counts down to the next on-track session.
 - Shows the current live session and time remaining for timed sessions.
 - Shows elapsed time for lap-based races where no honest time-remaining value exists.
-- Highlights Sydney 300 sessions.
+- Highlights the target category sessions.
 - Lets the crew manually adjust the schedule from Race Control / PA announcements.
 
 ## Race Control Adjustments
