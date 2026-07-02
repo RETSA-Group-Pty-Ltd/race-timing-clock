@@ -3,10 +3,13 @@
 ## Current State
 
 - Repo: `RETSA-Group-Pty-Ltd/race-timing-clock`
+- GitHub URL: `https://github.com/RETSA-Group-Pty-Ltd/race-timing-clock`
+- GitHub Pages URL: `https://retsa-group-pty-ltd.github.io/race-timing-clock/`
 - Local path: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock`
 - Branch: `main`
+- Latest local commit at repo creation: `1e5ea8a` (`Initial race timing clock`)
 - Source extracted from race-strategy-app local package after commit `8df993c` (`Prepare Winton race strategy updates`)
-- Deployment target: standalone local HTML first; GitHub Pages backup/share URL after repo publish.
+- Deployment target: standalone local HTML first; GitHub Pages backup/share URL.
 - Current production/race-day file: `index.html`
 - Event: 2026 MRA R4 / Sydney 300, Sydney Motorsport Park, Friday 12 June and Saturday 13 June 2026.
 

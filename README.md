@@ -4,6 +4,12 @@ Standalone race-day timing clock for motorsport event schedules.
 
 This app was created for the 2026 Sydney 300 as a second-screen schedule aid beside the Race Strategy App. It is intentionally simple: one self-contained `index.html` file with no build step, no login, no backend, and no internet dependency once copied locally.
 
+GitHub Pages backup:
+
+```text
+https://retsa-group-pty-ltd.github.io/race-timing-clock/
+```
+
 ## What It Does
 
 - Shows the current time of day.
