@@ -6,6 +6,7 @@
 - GitHub URL: `https://github.com/RETSA-Group-Pty-Ltd/race-timing-clock`
 - GitHub Pages URL: `https://retsa-group-pty-ltd.github.io/race-timing-clock/`
 - Local path: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock`
+- OneDrive race PC copy: `/Users/marcusrummler/Library/CloudStorage/OneDrive-Personal/Race Day apps/Race Timing Clock`
 - Branch: `main`
 - Latest app update commit at this handover update: `b36640d` (`Update clock for MRA R5 SuperTT`)
 - Latest repo commit: run `git log -1 --oneline` locally; handover-only commits may follow the app update commit.
@@ -70,6 +71,7 @@
   - one `Sun 5` day selector
   - four Oztrack SuperTT target rows highlighted with `TT`
   - no console errors
+- Copied updated race-day files to OneDrive `Race Day apps/Race Timing Clock` for Windows mini PC sync.
 - Theme matches Race Strategy Manager v1.7.19 electric blue telemetry styling.
 
 Historical Sydney 300 verification retained for context:
