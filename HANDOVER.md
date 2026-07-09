@@ -8,6 +8,7 @@
 - Local path: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock`
 - OneDrive race PC copy: `/Users/marcusrummler/Library/CloudStorage/OneDrive-Personal/Race Day apps/Race Timing Clock`
 - Branch: `main`
+- Latest repo commit before disaster-recovery pack: `2b448a8` (`Document OneDrive race-day clock copy`)
 - Latest app update commit at this handover update: `b36640d` (`Update clock for MRA R5 SuperTT`)
 - Latest repo commit: run `git log -1 --oneline` locally; handover-only commits may follow the app update commit.
 - Source extracted from race-strategy-app local package after commit `8df993c` (`Prepare Winton race strategy updates`)
@@ -19,6 +20,18 @@
 - Current schedule source: `/Users/marcusrummler/Downloads/26MRA-R5-EventSchedule(v1.26.07.02).pdf`.
 
 ## What Changed In This Session
+
+Disaster Recovery Pack - 2026-07-09:
+
+- Added `DISASTER_RECOVERY.md` as the repo-local recovery source of truth.
+- Added `scripts/backup-disaster-recovery.sh` to create a sensitive local recovery archive.
+- Updated `.gitignore` so generated `backups/` archives are not committed.
+- Recovery pack documents repo, branch, remotes, Pages deployment, OneDrive race PC copy, runtime state, logs, env assumptions, scheduled jobs, external services, validation, and restore flow.
+- Test backup created at `backups/race-timing-clock-disaster-recovery-20260709-195333.tar.gz` and inspected.
+- Test archive included source, git bundle, git metadata, OneDrive race-day copy, env/runtime/job notes, and a contents index.
+- Source schedule PDF was not present in Downloads during the test; backup recorded `external-artifacts.NOT_FOUND.txt`.
+
+MRA Round 5 / Oztrack SuperTT update:
 
 - Updated the clock from the Sydney 300 schedule to the MRA Round 5 Sunday schedule.
 - Updated visible title/subtitle to `MRA R5 Timing Clock` / `OZTRACK SUPERTT - SMP - SUNDAY 5 JULY 2026`.
@@ -52,7 +65,7 @@
 ## What Is Working And Verified
 
 - JS syntax check passed.
-- All 31 `getElementById()` references resolve to IDs present in `index.html`.
+- All `getElementById()` references resolve to IDs present in `index.html`.
 - Simulated MRA R5 / Oztrack SuperTT states passed for:
   - 2026-07-03 pre-event countdown to Sunday.
   - 2026-07-05 08:49 countdown to Oztrack SuperTT qualifying.
@@ -122,9 +135,25 @@ Open:
 http://localhost:8765/
 ```
 
+Create a disaster-recovery backup archive:
+
+```sh
+cd "/Users/marcusrummler/AI Developer Files/New project/race-timing-clock"
+./scripts/backup-disaster-recovery.sh
+```
+
+Default backup output:
+
+```text
+backups/race-timing-clock-disaster-recovery-YYYYmmdd-HHMMSS.tar.gz
+backups/race-timing-clock-disaster-recovery-YYYYmmdd-HHMMSS.tar.gz.contents.txt
+```
+
+Treat generated backups as sensitive if they include OneDrive copies or source PDFs.
+
 Windows race PC:
 
-1. Copy the `timing-clock` folder or just `index.html` from OneDrive.
+1. Open the OneDrive-synced `Race Day apps/Race Timing Clock/index.html`.
 2. Open `index.html` in Chrome or Edge.
 3. Keep the Race Strategy App open separately.
 4. Use this clock as a second-screen schedule aid only.
@@ -133,6 +162,8 @@ Windows race PC:
 
 - `index.html`: complete standalone timing clock with HTML, CSS, and JavaScript.
 - `HANDOVER.md`: this continuity document.
+- `DISASTER_RECOVERY.md`: restore, backup, deployment, tooling, and validation checklist.
+- `scripts/backup-disaster-recovery.sh`: creates local recovery archives under `backups/`.
 - Original source repo reference: `RETSA-Group-Pty-Ltd/race-strategy-app`.
 
 ## Assumptions And External Services
