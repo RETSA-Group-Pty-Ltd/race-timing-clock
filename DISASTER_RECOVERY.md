@@ -8,7 +8,7 @@ Last reviewed: 2026-07-16 AEST
 - Remote: `https://github.com/RETSA-Group-Pty-Ltd/race-timing-clock.git`
 - Local path: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock`
 - Branch: `main`
-- Latest committed recovery-pack baseline before Round 6 update: `5b1994e` (`Add disaster recovery pack`)
+- Latest app update commit at last DR review: `cd03358` (`Update clock for MRA R6 SuperTT`)
 - Current file to run: `index.html`
 - Operational handover: `HANDOVER.md`
 
@@ -142,6 +142,22 @@ SCHEDULE_PDF="/path/to/schedule.pdf" ./scripts/backup-disaster-recovery.sh
 ```
 
 ## Latest Test Backup
+
+- Test run: 2026-07-16 12:26 Australia/Sydney.
+- Archive: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock/backups/race-timing-clock-disaster-recovery-20260716-122621.tar.gz`
+- Contents index: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock/backups/race-timing-clock-disaster-recovery-20260716-122621.tar.gz.contents.txt`
+- Archive size: about 493 KiB.
+- Verified contents:
+  - `source/` with repo files including `index.html`, `HANDOVER.md`, `DISASTER_RECOVERY.md`, and backup script
+  - `git/race-timing-clock.bundle`
+  - `git/git-status.txt`, `git/git-log.txt`, `git/git-remotes.txt`
+  - `onedrive-race-day-copy/` with synced Round 6 race-day files
+  - `external-artifacts/26MRA-R6-EventSchedule(v2.26.07.10).pdf`
+  - `environment.example`
+  - `runtime-state.txt`
+  - `scheduled-jobs.txt`
+
+Historical test backup:
 
 - Test run: 2026-07-09 19:53 Australia/Sydney.
 - Archive: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock/backups/race-timing-clock-disaster-recovery-20260709-195333.tar.gz`

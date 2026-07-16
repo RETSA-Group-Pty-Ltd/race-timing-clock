@@ -9,7 +9,7 @@
 - OneDrive race PC copy: `/Users/marcusrummler/Library/CloudStorage/OneDrive-Personal/Race Day apps/Race Timing Clock`
 - Branch: `main`
 - Latest repo commit before Round 6 update: `5b1994e` (`Add disaster recovery pack`)
-- Latest app update commit before Round 6 update: `b36640d` (`Update clock for MRA R5 SuperTT`)
+- Latest app update commit: `cd03358` (`Update clock for MRA R6 SuperTT`)
 - Latest repo commit: run `git log -1 --oneline` locally; handover-only commits may follow the app update commit.
 - Source extracted from race-strategy-app local package after commit `8df993c` (`Prepare Winton race strategy updates`)
 - Deployment target: standalone local HTML first; GitHub Pages backup/share URL.
@@ -33,6 +33,9 @@ MRA Round 6 / Oztrack SuperTT update - 2026-07-16:
   - R14 15:55 race 3
 - Updated README and disaster-recovery schedule PDF defaults for Round 6.
 - The PDF lists `Drivers Briefings (as per Further Regulations)` without a fixed time row, so driver briefing is not included in the countdown schedule.
+- Copied Round 6 files to OneDrive `Race Day apps/Race Timing Clock` for Windows mini PC sync.
+- Test backup created at `backups/race-timing-clock-disaster-recovery-20260716-122621.tar.gz` and inspected.
+- Test archive included source, git bundle, git metadata, OneDrive race-day copy, env/runtime/job notes, contents index, and the Round 6 source PDF.
 
 Disaster Recovery Pack - 2026-07-09:
 
@@ -87,6 +90,11 @@ MRA Round 5 / Oztrack SuperTT update:
   - 2026-08-08 13:57 live Oztrack SuperTT Race 2.
   - 2026-08-08 15:56 live Oztrack SuperTT Race 3.
   - 2026-08-08 16:45 day complete.
+- Manual-control simulation passed:
+  - selecting Saturday R9 Oztrack SuperTT
+  - setting R9 from 13:56 to 14:05
+  - confirming downstream sessions cascade through R14 16:04 and R15 16:29
+- OneDrive copy check passed for Round 6 title and Oztrack SuperTT target rows.
 
 Historical MRA R5 verification retained for context:
 
@@ -102,7 +110,7 @@ Historical MRA R5 verification retained for context:
   - selecting Sunday R6 Oztrack SuperTT
   - setting R6 from 12:38 to 12:50
   - confirming the selected row shows the revised time and downstream sessions cascade
-- Browser preview passed on `http://localhost:8767/`:
+Historical browser preview for R5 passed on `http://localhost:8767/`:
   - title `MRA R5 Timing Clock - Oztrack SuperTT`
   - 19 running-order rows
   - one `Sun 5` day selector
