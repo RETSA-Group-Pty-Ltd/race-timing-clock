@@ -1,6 +1,6 @@
 # Race Timing Clock Disaster Recovery
 
-Last reviewed: 2026-07-09 AEDT
+Last reviewed: 2026-07-16 AEST
 
 ## Source Of Truth
 
@@ -8,7 +8,7 @@ Last reviewed: 2026-07-09 AEDT
 - Remote: `https://github.com/RETSA-Group-Pty-Ltd/race-timing-clock.git`
 - Local path: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock`
 - Branch: `main`
-- Latest commit at DR inspection: `2b448a8` (`Document OneDrive race-day clock copy`)
+- Latest committed recovery-pack baseline before Round 6 update: `5b1994e` (`Add disaster recovery pack`)
 - Current file to run: `index.html`
 - Operational handover: `HANDOVER.md`
 
@@ -38,7 +38,7 @@ git remote -v
 - Credentials: none required to run the app. GitHub credentials are required only to push or inspect Actions with `gh`.
 - Secrets in repo: none expected. Do not add API keys, GitHub tokens, Natsoft credentials, browser profile data, or OneDrive auth material.
 - User/session state: manual schedule adjustments live only in the current browser session and reset on reload.
-- Source schedule artifact: `/Users/marcusrummler/Downloads/26MRA-R5-EventSchedule(v1.26.07.02).pdf` if still present locally.
+- Current source schedule artifact: `/Users/marcusrummler/Downloads/26MRA-R6-EventSchedule(v2.26.07.10).pdf` if still present locally.
 
 ## Scheduled Jobs And External Services
 

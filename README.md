@@ -12,11 +12,11 @@ https://retsa-group-pty-ltd.github.io/race-timing-clock/
 
 ## Current Event
 
-- 2026 MRA Series Round 5
-- Sydney Motorsport Park
-- Sunday 5 July 2026
+- 2026 MRA Series Round 6
+- One Raceway - Wakefield Circuit
+- Saturday 8 August 2026
 - Target category: Oztrack SuperTT
-- Schedule source: `26MRA-R5-EventSchedule(v1.26.07.02).pdf`
+- Schedule source: `26MRA-R6-EventSchedule(v2.26.07.10).pdf`
 
 ## What It Does
 

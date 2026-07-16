@@ -8,18 +8,31 @@
 - Local path: `/Users/marcusrummler/AI Developer Files/New project/race-timing-clock`
 - OneDrive race PC copy: `/Users/marcusrummler/Library/CloudStorage/OneDrive-Personal/Race Day apps/Race Timing Clock`
 - Branch: `main`
-- Latest repo commit before disaster-recovery pack: `2b448a8` (`Document OneDrive race-day clock copy`)
-- Latest app update commit at this handover update: `b36640d` (`Update clock for MRA R5 SuperTT`)
+- Latest repo commit before Round 6 update: `5b1994e` (`Add disaster recovery pack`)
+- Latest app update commit before Round 6 update: `b36640d` (`Update clock for MRA R5 SuperTT`)
 - Latest repo commit: run `git log -1 --oneline` locally; handover-only commits may follow the app update commit.
 - Source extracted from race-strategy-app local package after commit `8df993c` (`Prepare Winton race strategy updates`)
 - Deployment target: standalone local HTML first; GitHub Pages backup/share URL.
 - GitHub Pages status at publish: built and returning `index.html`.
 - Current production/race-day file: `index.html`
-- Current event: 2026 MRA Series Round 5, Sydney Motorsport Park, Sunday 5 July 2026.
+- Current event: 2026 MRA Series Round 6, One Raceway - Wakefield Circuit, Saturday 8 August 2026.
 - Target category: Oztrack SuperTT.
-- Current schedule source: `/Users/marcusrummler/Downloads/26MRA-R5-EventSchedule(v1.26.07.02).pdf`.
+- Current schedule source: `/Users/marcusrummler/Downloads/26MRA-R6-EventSchedule(v2.26.07.10).pdf`.
 
 ## What Changed In This Session
+
+MRA Round 6 / Oztrack SuperTT update - 2026-07-16:
+
+- Extracted official Round 6 schedule from `26MRA-R6-EventSchedule(v2.26.07.10).pdf`.
+- Updated visible title/subtitle to `MRA R6 Timing Clock` / `OZTRACK SUPERTT - ONE RACEWAY - SATURDAY 8 AUGUST 2026`.
+- Replaced the schedule data with 21 timed rows for Saturday 8 August 2026.
+- Highlighted Oztrack SuperTT rows with `TT` badges:
+  - Q4 10:00 qualifying
+  - R4 11:40 race 1
+  - R9 13:56 race 2
+  - R14 15:55 race 3
+- Updated README and disaster-recovery schedule PDF defaults for Round 6.
+- The PDF lists `Drivers Briefings (as per Further Regulations)` without a fixed time row, so driver briefing is not included in the countdown schedule.
 
 Disaster Recovery Pack - 2026-07-09:
 
@@ -66,6 +79,17 @@ MRA Round 5 / Oztrack SuperTT update:
 
 - JS syntax check passed.
 - All `getElementById()` references resolve to IDs present in `index.html`.
+- Simulated MRA R6 / Oztrack SuperTT states passed for:
+  - 2026-07-16 pre-event countdown to Saturday.
+  - 2026-08-08 09:59 countdown to Oztrack SuperTT qualifying.
+  - 2026-08-08 10:01 live Oztrack SuperTT qualifying.
+  - 2026-08-08 11:41 live Oztrack SuperTT Race 1.
+  - 2026-08-08 13:57 live Oztrack SuperTT Race 2.
+  - 2026-08-08 15:56 live Oztrack SuperTT Race 3.
+  - 2026-08-08 16:45 day complete.
+
+Historical MRA R5 verification retained for context:
+
 - Simulated MRA R5 / Oztrack SuperTT states passed for:
   - 2026-07-03 pre-event countdown to Sunday.
   - 2026-07-05 08:49 countdown to Oztrack SuperTT qualifying.
@@ -104,15 +128,16 @@ Historical Sydney 300 verification retained for context:
 
 ## What Is Unfinished Or Risky
 
-- Schedule is manually transcribed from official R5 event schedule v1.26.07.02. If organisers issue a newer timetable, update the `SCHEDULE` object and re-test.
+- Schedule is manually transcribed from official R6 event schedule v2.26.07.10. If organisers issue a newer timetable, update the `SCHEDULE` object and re-test.
+- Driver briefings are not timed in the PDF schedule; follow Further Regulations, PA, and Race Control for briefing timing.
 - Delay and Race Control adjustment controls are manual estimates only. Official PA, Race Control, and published schedules override this clock.
-- Current R5 sessions are time-boxed. The lap-based elapsed-only path remains in code for future events but is not used by the current schedule.
+- Current R6 sessions are time-boxed. The lap-based elapsed-only path remains in code for future events but is not used by the current schedule.
 - No persistence by design. Reloading resets selected day, delay, manual overrides, and done states.
 - Not connected to Natsoft or live timing.
 
 ## Critical Logic To Avoid Casual Refactor
 
-- `DAY_DATES` uses JavaScript zero-indexed months: July is `6`.
+- `DAY_DATES` uses JavaScript zero-indexed months: August is `7`.
 - Breaks are shown in the running order but skipped by the next on-track session countdown.
 - Lap-based race handling intentionally avoids fake countdowns.
 - Delay anchoring is per day using `delayMinByDay` and `delayAnchorByDay`.

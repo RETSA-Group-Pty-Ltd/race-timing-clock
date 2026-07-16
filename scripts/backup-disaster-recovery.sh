@@ -6,7 +6,7 @@ APP_NAME="race-timing-clock"
 STAMP="$(date +"%Y%m%d-%H%M%S")"
 BACKUP_DIR="${BACKUP_DIR:-"$REPO_ROOT/backups"}"
 ONEDRIVE_COPY="${ONEDRIVE_COPY:-"$HOME/Library/CloudStorage/OneDrive-Personal/Race Day apps/Race Timing Clock"}"
-SCHEDULE_PDF="${SCHEDULE_PDF:-"$HOME/Downloads/26MRA-R5-EventSchedule(v1.26.07.02).pdf"}"
+SCHEDULE_PDF="${SCHEDULE_PDF:-"$HOME/Downloads/26MRA-R6-EventSchedule(v2.26.07.10).pdf"}"
 
 ARCHIVE_NAME="$APP_NAME-disaster-recovery-$STAMP.tar.gz"
 STAGE="$BACKUP_DIR/$APP_NAME-disaster-recovery-$STAMP"

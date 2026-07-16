@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#050510">
-<title>MRA R5 Timing Clock - Oztrack SuperTT</title>
+<title>MRA R6 Timing Clock - Oztrack SuperTT</title>
 <style>
   :root{
     --primary:#00D9FF; --primary-dark:#00B8DD; --primary-glow:rgba(0,217,255,.3);
@@ -134,8 +134,8 @@
 
 <header class="header">
   <div>
-    <div class="race-title">MRA R5 Timing Clock</div>
-    <div class="race-sub">OZTRACK SUPERTT - SMP - SUNDAY 5 JULY 2026</div>
+    <div class="race-title">MRA R6 Timing Clock</div>
+    <div class="race-sub">OZTRACK SUPERTT - ONE RACEWAY - SATURDAY 8 AUGUST 2026</div>
   </div>
   <div class="hclock">
     <div class="clock-time num" id="tod">00:00:00</div>
@@ -148,7 +148,7 @@
   <span class="conn-status" id="connStatus">SCHEDULE MODE - times are estimated</span>
   <span class="conn-spacer"></span>
   <div class="seg" id="daySeg">
-    <button data-day="sun">Sun 5</button>
+    <button data-day="sat">Sat 8</button>
   </div>
   <button class="ctl-btn warn" id="delayMinus">- 5</button>
   <button class="ctl-btn delay-readout zero" id="delayBtn">On time</button>
@@ -221,47 +221,49 @@
 </div>
 
 <script>
-/* 2026 MRA R5 - Sydney Motorsport Park.
-   Schedule transcribed from official event schedule v1.26.07.02.
+/* 2026 MRA R6 - One Raceway, Wakefield Circuit.
+   Schedule transcribed from official event schedule v2.26.07.10.
    durationMin: time-boxed session length.
    laps: lap-based race length, displayed with elapsed time because there is no live lap feed here.
    type: "break" for admin, briefings, lunch, dinner, and gate notes.
    isTarget: highlight Oztrack SuperTT sessions. */
-const DAY_DATES = { sun:[2026,6,5] };
-const DAY_ORDER = ["sun"];
+const DAY_DATES = { sat:[2026,7,8] };
+const DAY_ORDER = ["sat"];
 const SCHEDULE = {
-  sun: {
-    label: "Sunday 5 July",
+  sat: {
+    label: "Saturday 8 August",
     items: [
-      {code:"B1", t:"07:45", name:"Drivers Briefing", type:"break"},
-      {code:"Q1", t:"08:30", name:"Alfa Romeo Racing", note:"Qualifying", durationMin:15},
-      {code:"Q2", t:"08:50", name:"Oztrack SuperTT", note:"Qualifying", durationMin:20, isTarget:true},
-      {code:"Q3", t:"09:15", name:"WinmaX Pulsars", note:"Qualifying", durationMin:20},
-      {code:"Q4", t:"09:40", name:"MX5 Mania MX5 Cup", note:"Qualifying", durationMin:20},
-      {code:"R1", t:"10:05", name:"Alfa Romeo Racing", note:"Race 1", durationMin:20},
-      {code:"R2", t:"10:30", name:"Oztrack SuperTT", note:"Race 1", durationMin:20, isTarget:true},
-      {code:"R3", t:"10:55", name:"WinmaX Pulsars", note:"Race 1", durationMin:20},
-      {code:"R4", t:"11:20", name:"MX5 Mania MX5 Cup", note:"Race 1", durationMin:20},
-      {code:"R5", t:"11:45", name:"Alfa Romeo Racing", note:"Race 2", durationMin:17},
-      {code:"",   t:"12:08", name:"Lunch", type:"break", durationMin:30},
-      {code:"R6", t:"12:38", name:"Oztrack SuperTT", note:"Race 2", durationMin:20, isTarget:true},
-      {code:"R7", t:"13:03", name:"WinmaX Pulsars", note:"Race 2", durationMin:20},
-      {code:"R8", t:"13:28", name:"MX5 Mania MX5 Cup", note:"Race 2", durationMin:20},
-      {code:"R9", t:"13:53", name:"Alfa Romeo Racing", note:"Race 3", durationMin:17},
-      {code:"R10",t:"14:16", name:"Oztrack SuperTT", note:"Race 3", durationMin:20, isTarget:true},
-      {code:"R11",t:"14:41", name:"WinmaX Pulsars", note:"Race 3", durationMin:30},
-      {code:"R12",t:"15:16", name:"MX5 Mania MX5 Cup", note:"Race 3", durationMin:20},
-      {code:"R13",t:"15:41", name:"Alfa Romeo Racing", note:"Race 4", durationMin:20}
+      {code:"Q1", t:"09:00", name:"MX5 Mania - MX5 Cup", note:"Qualifying", durationMin:15},
+      {code:"Q2", t:"09:20", name:"Improved Production (IPRA)", note:"Qualifying", durationMin:15},
+      {code:"Q3", t:"09:40", name:"WinmaX Pulsars", note:"Qualifying", durationMin:15},
+      {code:"Q4", t:"10:00", name:"Oztrack SuperTT", note:"Qualifying", durationMin:15, isTarget:true},
+      {code:"Q5", t:"10:20", name:"Clubman Championship", note:"Qualifying", durationMin:15},
+      {code:"R1", t:"10:40", name:"MX5 Mania - MX5 Cup", note:"Race 1", durationMin:15},
+      {code:"R2", t:"11:00", name:"Improved Production (IPRA)", note:"Race 1", durationMin:15},
+      {code:"R3", t:"11:20", name:"WinmaX Pulsars", note:"Race 1", durationMin:15},
+      {code:"R4", t:"11:40", name:"Oztrack SuperTT", note:"Race 1", durationMin:15, isTarget:true},
+      {code:"R5", t:"12:00", name:"Clubman Championship", note:"Race 1", durationMin:15},
+      {code:"B1", t:"12:20", name:"Lunch", type:"break", durationMin:30},
+      {code:"R6", t:"12:50", name:"MX5 Mania - MX5 Cup", note:"Race 2", durationMin:17},
+      {code:"R7", t:"13:12", name:"Improved Production (IPRA)", note:"Race 2", durationMin:17},
+      {code:"R8", t:"13:34", name:"WinmaX Pulsars", note:"Race 2", durationMin:17},
+      {code:"R9", t:"13:56", name:"Oztrack SuperTT", note:"Race 2", durationMin:17, isTarget:true},
+      {code:"R10",t:"14:18", name:"Clubman Championship", note:"Race 2", durationMin:17},
+      {code:"R11",t:"14:40", name:"MX5 Mania - MX5 Cup", note:"Race 3", durationMin:20},
+      {code:"R12",t:"15:05", name:"Improved Production (IPRA)", note:"Race 3", durationMin:20},
+      {code:"R13",t:"15:30", name:"WinmaX Pulsars", note:"Race 3", durationMin:20},
+      {code:"R14",t:"15:55", name:"Oztrack SuperTT", note:"Race 3", durationMin:20, isTarget:true},
+      {code:"R15",t:"16:20", name:"Clubman Championship", note:"Race 3", durationMin:20}
     ]
   }
 };
 
-let currentDay = "sun";
-let delayMinByDay = { sun:0 };
-let delayAnchorByDay = { sun:null };
-let selectedIdxByDay = { sun:null };
-let startOverridesByDay = { sun:{} };
-let completedByDay = { sun:{} };
+let currentDay = "sat";
+let delayMinByDay = { sat:0 };
+let delayAnchorByDay = { sat:null };
+let selectedIdxByDay = { sat:null };
+let startOverridesByDay = { sat:{} };
+let completedByDay = { sat:{} };
 let lastManualNote = "";
 const pad = n => String(n).padStart(2,"0");
 
@@ -275,7 +277,7 @@ const pad = n => String(n).padStart(2,"0");
     const [Y,Mo,D] = DAY_DATES[k];
     if(new Date(Y,Mo,D,23,59) >= now){ currentDay=k; return; }
   }
-  currentDay = "sun";
+  currentDay = "sat";
 })();
 
 function baseSessionStart(day,item){
